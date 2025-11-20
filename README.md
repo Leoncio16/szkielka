@@ -21,38 +21,87 @@ View your app in AI Studio: https://ai.studio/apps/drive/1jQ6yDf0xBtzHEI0QKmzvQL
 
 ## Deploy to GitHub Pages
 
-### Automatyczne wdrażanie (Zalecane)
+### Krok 1: Przygotowanie repozytorium na GitHub
 
-1. **Włącz GitHub Pages w ustawieniach repozytorium:**
-   - Przejdź do Settings → Pages w swoim repozytorium GitHub
-   - W sekcji "Source" wybierz "GitHub Actions"
+1. **Utwórz nowe repozytorium na GitHub** (jeśli jeszcze nie masz):
+   - Przejdź na https://github.com/new
+   - Wprowadź nazwę repozytorium (np. `screenguard-matcher`)
+   - Wybierz publiczne lub prywatne
+   - **NIE** zaznaczaj "Initialize with README" (jeśli już masz kod lokalnie)
 
-2. **Dodaj sekret z kluczem API (jeśli potrzebny):**
-   - Przejdź do Settings → Secrets and variables → Actions
-   - Dodaj nowy secret o nazwie `GEMINI_API_KEY` z wartością Twojego klucza API
-
-3. **Wypchnij kod na GitHub:**
+2. **Połącz lokalne repozytorium z GitHub** (jeśli jeszcze nie połączone):
    ```bash
-   git add .
-   git commit -m "Configure GitHub Pages deployment"
-   git push origin main
+   git remote add origin https://github.com/[twoja-nazwa-uzytkownika]/[nazwa-repozytorium].git
+   git branch -M main  # lub master, jeśli używasz master
+   git push -u origin main
    ```
 
-4. **Workflow automatycznie wdroży aplikację:**
-   - Po każdym pushu do brancha `main` lub `master`, aplikacja zostanie automatycznie zbudowana i wdrożona
-   - Sprawdź status w zakładce "Actions" w repozytorium
-   - Po zakończeniu, aplikacja będzie dostępna pod adresem: `https://[twoja-nazwa-uzytkownika].github.io/[nazwa-repozytorium]/`
+### Krok 2: Włącz GitHub Pages
 
-### Ręczne wdrażanie
+1. **Przejdź do ustawień repozytorium:**
+   - W repozytorium GitHub kliknij **Settings** (Ustawienia)
+   - W menu po lewej stronie znajdź **Pages**
 
-1. Zainstaluj `gh-pages` globalnie:
-   ```bash
-   npm install -g gh-pages
-   ```
+2. **Skonfiguruj źródło:**
+   - W sekcji **Source** wybierz **"GitHub Actions"** (nie "Deploy from a branch")
+   - Zostaw resztę ustawień domyślnych
 
-2. Zbuduj i wdróż:
-   ```bash
-   npm run deploy
-   ```
+### Krok 3: Dodaj sekret z kluczem API (opcjonalnie)
 
-**Uwaga:** Przed wdrożeniem upewnij się, że w `vite.config.ts` base path jest ustawiony na nazwę Twojego repozytorium (zostanie automatycznie ustawiony przez GitHub Actions).
+Jeśli aplikacja używa klucza API (np. GEMINI_API_KEY):
+
+1. W repozytorium GitHub przejdź do **Settings → Secrets and variables → Actions**
+2. Kliknij **New repository secret**
+3. Wprowadź:
+   - **Name:** `GEMINI_API_KEY`
+   - **Secret:** Twój klucz API
+4. Kliknij **Add secret**
+
+### Krok 4: Wypchnij kod na GitHub
+
+```bash
+# Dodaj wszystkie zmiany
+git add .
+
+# Zatwierdź zmiany
+git commit -m "Configure GitHub Pages deployment"
+
+# Wypchnij na GitHub
+git push origin main
+# lub jeśli używasz brancha master:
+# git push origin master
+```
+
+### Krok 5: Sprawdź wdrożenie
+
+1. **Sprawdź status workflow:**
+   - W repozytorium GitHub kliknij zakładkę **Actions**
+   - Powinieneś zobaczyć workflow "Deploy to GitHub Pages" w trakcie wykonywania
+   - Poczekaj, aż workflow się zakończy (zielony znaczek ✓)
+
+2. **Znajdź adres aplikacji:**
+   - Po zakończeniu workflow, przejdź do **Settings → Pages**
+   - Adres aplikacji będzie widoczny na górze strony
+   - Format: `https://[twoja-nazwa-uzytkownika].github.io/[nazwa-repozytorium]/`
+
+### Automatyczne wdrażanie
+
+Po skonfigurowaniu, każdy push do brancha `main` lub `master` automatycznie:
+- Zbuduje aplikację
+- Wdroży ją na GitHub Pages
+- Aplikacja będzie dostępna w ciągu 1-2 minut
+
+### Rozwiązywanie problemów
+
+**Problem: Workflow się nie uruchamia**
+- Sprawdź, czy plik `.github/workflows/deploy.yml` istnieje w repozytorium
+- Upewnij się, że branch nazywa się `main` lub `master`
+
+**Problem: Aplikacja nie działa po wdrożeniu**
+- Sprawdź, czy base path w `vite.config.ts` jest poprawny (ustawiany automatycznie)
+- Sprawdź konsolę przeglądarki pod kątem błędów 404
+- Upewnij się, że wszystkie pliki zostały wypchnięte na GitHub
+
+**Problem: Błędy podczas budowania**
+- Sprawdź logi w zakładce **Actions**
+- Upewnij się, że wszystkie zależności są w `package.json`
