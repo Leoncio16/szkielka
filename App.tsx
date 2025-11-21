@@ -63,7 +63,7 @@ const App: React.FC = () => {
 
               {currentView === ViewState.IMPORT && (
                 <div className="animate-fadeIn">
-                  <DataImport onImportComplete={refreshData} />
+                  <DataImport phones={phones} onImportComplete={refreshData} />
                 </div>
               )}
             </>
